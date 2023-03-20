@@ -1,0 +1,15 @@
+Description:  This template creates S3 bucket
+
+Parameters:
+  BucketName:
+    Description: S3 bucket name to store app data
+    Type: String
+    Default: belong-coding-challenge-anup
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
+      VersioningConfiguration:
+        Status: Enabled
+      AccessControl: Private
