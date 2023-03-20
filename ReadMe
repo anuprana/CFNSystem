@@ -20,3 +20,6 @@ Useful command to get the keypair :
 Get keyId: aws ec2 describe-key-pairs --filters Name=key-name,Values=AppKeyPair --query KeyPairs[*].KeyPairId --output text
 Get Key : aws ssm get-parameter --name /ec2/keypair/<<keyId>> --with-decryption --query Parameter.Value --output text > AppKeyPair.pem  
   
+Enhancement:
+ASG Group,Launch config can be added for the AppHost which will scale the system according to the usage.This will ensure system availabilty across all the AZs.
+Monitoring/Alarms can be added that will allow us to monitor the usage of the system and help us to take action in crisis.
