@@ -1,0 +1,22 @@
+MyApp-S3.yaml stack
+The other stack MyApp-S3.yaml creates S3 bucket which will contain html file that will be downloaded to the App Host upon startup.
+
+MyApp.yaml stack 
+This app creates VPC with 2 subnet each in Private,Public subnets along with NAT Gateway and Internet Gateway.
+Bastion Host is created in public subnet which will be used to access App Host in Private Subnet.
+KeyPair will be created along with the stack which will be used to access the Host to debug.
+
+
+CloudFormation is used to create the aws resources.
+
+Steps to create the stack.
+1. Deploy MyApp-S3.yaml stack : aws cloudformation deploy --template-file MyApp-S3.yaml --parameter-overrides --stack-name myAppS3Stack --tags app=myAppS3 
+2. Copy html file to s3 bucket : aws s3 cp --profile default README.md s3://belong-coding-challenge-anup/
+3. Deploy MyApp stack : aws cloudformation deploy --template-file MyApp.yaml --parameter-overrides EnvironmentName=dev --stack-name myAppStack --tags app=myApp --capabilities CAPABILITY_NAMED_IAM
+   Upon successfully deploying the resources ALBDNSEndpoint output variable shall contain the ALB DNS endpoint to access the httpd service.
+   
+For troubleshooting we can connect to bastion host using the KeyPair with name AppKeyPair.
+Useful command to get the keypair :
+Get keyId: aws ec2 describe-key-pairs --filters Name=key-name,Values=AppKeyPair --query KeyPairs[*].KeyPairId --output text
+Get Key : aws ssm get-parameter --name /ec2/keypair/<<keyId>> --with-decryption --query Parameter.Value --output text > AppKeyPair.pem  
+  
