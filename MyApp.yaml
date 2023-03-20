@@ -359,3 +359,7 @@ Outputs:
   AppKeyPair:
     Description: AppKey Pair
     Value: !Ref AppKeyPair
+
+  ALBDNSEndpoint:
+    Description: ALB DNS Endpoint
+    Value: !GetAtt MyAppALB.DNSName
