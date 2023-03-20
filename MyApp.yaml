@@ -276,16 +276,56 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
          #!/bin/bash
+            timedatectl set-timezone Australia/Melbourne
             yum update -y
             yum install -y httpd
             echo "Hello World" > /var/www/html/index.html
             systemctl start httpd
             systemctl enable httpd
-
       Tags:
         -
           Key: Host
           Value: App
+
+  MyAppALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      IpAddressType: ipv4
+      Name: MyAppALB
+      Scheme: internet-facing
+      SecurityGroups:
+        - !Ref AppSecurityGroup
+      Subnets: [ !Ref PublicSubnet1,!Ref PublicSubnet2]
+      Tags:
+        - Key: ALB
+          Value: APPALB
+
+  MyAppALBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref MyAppALB
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref MyALBTargetGroup
+
+  MyALBTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !Ref 'VPC'
+      Port: 80
+      Protocol: HTTP
+      HealthCheckIntervalSeconds: 6
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 5
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 5
+      TargetType: instance
+      Targets:
+        - Id: !Ref AppInstance
+          Port: 80
 
 Outputs:
   VPC:
