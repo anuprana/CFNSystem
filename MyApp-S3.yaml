@@ -4,7 +4,7 @@ Parameters:
   BucketName:
     Description: S3 bucket name to store app data
     Type: String
-    Default: myS3
+    Default: myS3Bucket
 Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
